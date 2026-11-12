@@ -2,14 +2,48 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=1920">
 <title>Eirin's Clinic</title>
 <style>
-html,body{margin:0;padding:0;background:#000}
-embed{display:block;width:1920px;height:1080px}
+html,body{margin:0;padding:0;background:#000;min-height:100%}
+#w{width:1920px;height:1080px;background:#000}
+#w>*{display:block;width:1920px!important;height:1080px!important}
+body.m #w{width:100vw;height:56.25vw}
+body.m #w>*{width:100%!important;height:100%!important}
+body.m #w:fullscreen{width:100vw;height:100vh}
+#b{display:block;margin:60px auto;padding:24px 64px;border:0;border-radius:20px;background:#fff;color:#000;font:600 56px sans-serif;cursor:pointer}
+body.m #b{margin:24px auto;padding:12px 28px;font-size:18px;border-radius:10px}
 </style>
 <script src="https://unpkg.com/@ruffle-rs/ruffle@0.7.1/ruffle.js"></script>
 </head>
 <body>
-<embed src="Eirin%27s%20Clinic%20that%20people%20queue%20up%20for.swf" width="1920" height="1080">
+<div id="w"><embed src="Eirin%27s%20Clinic%20that%20people%20queue%20up%20for.swf" width="1920" height="1080"></div>
+<button id="b" type="button">Format mobile</button>
+<script>
+const w=document.getElementById("w");
+const b=document.getElementById("b");
+const v=document.querySelector("meta[name=viewport]");
+let on=false;
+function apply(s){
+on=s;
+document.body.classList.toggle("m",s);
+v.setAttribute("content",s?"width=device-width,initial-scale=1":"width=1920");
+b.textContent=s?"Format ordinateur":"Format mobile";
+}
+b.addEventListener("click",async()=>{
+if(!on){
+apply(true);
+try{await w.requestFullscreen();}catch(e){}
+try{await screen.orientation.lock("landscape");}catch(e){}
+}else{
+if(document.fullscreenElement){document.exitFullscreen().catch(()=>{});}
+try{screen.orientation.unlock();}catch(e){}
+apply(false);
+}
+});
+document.addEventListener("fullscreenchange",()=>{
+if(!document.fullscreenElement){try{screen.orientation.unlock();}catch(e){}}
+});
+</script>
 </body>
 </html>
